@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="themeToggle.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="site-nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Me</a>
+            <a href="resume.html">Resume</a>
+            <a href="contactForm.html">Contact Me</a>
+            <div class="theme-menu-wrapper">
+                <button class="theme-button">Theme ▾</button>
+                <ul class="theme-list" id="themeMenu">
+                    <li data-theme="light">Light🌞</li>
+                    <li data-theme="pink">Pink💅</li>
+                    <li data-theme="dark">Dark🌛</li>
+                </ul>
+            </div>
+            <noscript>js is disabled or not supported, theme toggle is not available</noscript>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <table>
+            <colgroup>
+                <col style="width: 300px;">
+                <col style="width: 950px;">
+            </colgroup>
+
+            <tr>
+                <th colspan="2">
+                    <code>console.log("Hello, visitor!");</code>
+                </th>
+            </tr>
+
+            <tr>
+                <td>
+                    <picture>
+                        <source srcset="src/image/WechatIMG2294 copy.webp" type="image/webp">
+                        <img src="src/image/WechatIMG2294.jpg" alt="Terry Ren Photo"
+                            style="object-fit: cover; object-position: center; width: 300px; height: 400px;"
+                            loading="lazy">
+
+                    </picture>
+                </td>
+                <td valign="top">
+                    <h1>Taorui (Terry) Ren</h1>
+                    <p>
+                        I'm Terry Ren, a Math-CS undergraduate at
+                        <dfn><abbr title="University of California, San Diego">UCSD</abbr></dfn>
+                        with a strong passion for problem-solving, algorithms, and software development.
+                        My academic background combines the rigor of mathematics with the practicality of
+                        computer science, allowing me to approach challenges with both analytical depth and
+                        computational efficiency.
+                    </p>
+
+                    <h2>Technologies I Work With</h2>
+                    <dl>
+                        <dt>💻 <strong>Languages:</strong></dt>
+                        <dd>Python, C++, Java, JavaScript, SQL</dd>
+                        <dt>🛠 <strong>Frameworks &amp; Tools:</strong></dt>
+                        <dd>ReactJS, Next.js, AWS, Docker, Spring Boot, Git</dd>
+                    </dl>
+                    <p>
+                        I thrive in collaborative and fast-paced environments, constantly pushing
+                        myself to explore new technologies and improve my problem-solving skills.
+                        Feel free to
+                        <a href="mailto:terrydomore@gmail.com"><strong>email me</strong></a>—
+                        I'd love to connect!
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Taorui Ren. All rights reserved.</p>
+        <div class="social-links">
+            <address>Contact:
+                <a href="mailto:terrydomore@gmail.com">Email</a> |
+                <a href="https://www.linkedin.com/in/terry-ren-753578272/" target="_blank">LinkedIn</a> |
+                <a href="https://github.com/Terry032121" target="_blank">GitHub</a> |
+                <a href="tel:+18583050218">+1 (858) 305-0218</a>
+            </address>
+        </div>
+    </footer>
+</body>
+
+</html>

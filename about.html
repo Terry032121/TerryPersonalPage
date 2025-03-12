@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About me </title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="aboutStyle.css">
+    <script src="themeToggle.js"></script>
+    <style>
+        section {
+            margin: 30px auto;
+            max-width: 900px;
+            padding: 20px;
+            background: var(--bg-color, #fff);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 0.25rem solid var(--primary-color, #0066cc);
+        }
+
+        video {
+            display: block;
+            width: 50%;
+            height: 20%;
+        }
+
+        :root {
+            --card-bg: #f7f7f7;
+            --card-color: #333;
+            --card-border: #ccc;
+            --card-heading-color: #0066cc;
+        }
+
+        .project-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px auto;
+            max-width: 900px;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="site-nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Me</a>
+            <a href="resume.html">Resume</a>
+            <a href="contactForm.html">Contact Me</a>
+            <div class="theme-menu-wrapper">
+                <button class="theme-button">Theme ▾</button>
+                <ul class="theme-list" id="themeMenu">
+                    <li data-theme="light">Light🌞</li>
+                    <li data-theme="pink">Pink💅</li>
+                    <li data-theme="dark">Dark🌛</li>
+                </ul>
+            </div>
+            <noscript>js is disabled or not supported, theme toggle is not available</noscript>
+        </nav>
+    </header>
+
+    <section>
+        <h2>My Hobbies</h2>
+        <div class="data-buttons">
+            <button id="loadLocal">Load Local</button>
+            <button id="loadRemoteBtn">Load Remote</button>
+          </div>
+          <div class="project-card-container" id="projectCards"></div>
+    </section>
+
+
+    <footer>
+        <p>&copy; 2025 Taorui Ren. All rights reserved.</p>
+        <div class="social-links">
+            <address>Contact:
+                <a href="mailto:terrydomore@gmail.com">Email</a> |
+                <a href="https://www.linkedin.com/in/terry-ren-753578272/" target="_blank">LinkedIn</a> |
+                <a href="https://github.com/Terry032121" target="_blank">GitHub</a> |
+                <a href="tel:+18583050218">+1 (858) 305-0218</a>
+            </address>
+        </div>
+    </footer>
+
+    <script src="projectcard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Contact Form</title>
+    <style>
+        form {
+            max-width: 500px;
+            margin: 1.5rem auto;
+            padding: 1rem;
+            border: 2px solid #ccc;
+            font-family: sans-serif;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+            box-sizing: border-box;
+        }
+
+
+        input:valid,
+        textarea:valid {
+            border: 2px solid green;
+        }
+
+        input:invalid,
+        textarea:invalid {
+            border: 2px solid red;
+        }
+
+        button[type="submit"] {
+            display: block;
+            margin: 1rem auto;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    </header>
+    <form action="https://httpbin.org/post" method="POST">
+        <label for="name">
+            Name <span aria-hidden="true">*</span>:
+        </label>
+        <input type="text" id="name" name="name" required pattern="[A-Za-z\s]{2,50}" minlength="2" maxlength="50"
+            placeholder="Enter your name">
+
+        <label for="email">
+            Email <span aria-hidden="true">*</span>:
+        </label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email">
+
+        <label for="comments">
+            Comments <span aria-hidden="true">*</span>:
+        </label>
+        <textarea id="comments" name="comments" required minlength="10" maxlength="250" pattern="[A-Za-z0-9\s\.,!?'-]+"
+            placeholder="Write your comments here (10-250 chars)..."></textarea>
+
+        <input type="hidden" name="possible_bot" value="true">
+
+        <button type="submit">Send</button>
+        <output id="errorMessage" class="error" aria-live="polite"></output>
+        <output id="infoMessage" class="info" aria-live="polite"></output>
+    </form>
+
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowboarding</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        section {
+            margin: 30px auto;
+            max-width: 900px;
+            padding: 20px;
+            background: var(--bg-color, #fff);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 0.25rem solid var(--primary-color, #0066cc);
+        }
+
+        video {
+            display: block;
+            width: 50%;
+            height: 2 0%;
+        }
+
+        button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="history.back()">Back</button>
+    <section id="Snowboarding">
+        <h2>Snowboarding</h2>
+        <video controls>
+            <source src="/src/video/Snowboarding.mp4" type="video/mp4">
+            Video of me Snowboarding
+        </video>
+        <p>
+            My favorite place to ride is Mammoth, where the crisp mountain air, endless powder, and stunning views
+            create
+            the perfect playground for my adventures. Whether I'm carving down steep runs, trying out new tricks, or
+            simply
+            soaking in the majestic scenery, every trip to Mammoth reminds me why I love the thrill of the ride. It's
+            not
+            just about the rush—it's about reconnecting with nature and feeling truly alive.
+        </p>
+        <picture>
+            <source srcset="/src/image/Snowboarding-800.webp" type="image/webp">
+            <img src="/src/image/Snowboarding.JPG" alt="Terry Snowboarding" loading="lazy" width="300" height="300">
+        </picture>
+    </section>
+</body>
+
+</html>
