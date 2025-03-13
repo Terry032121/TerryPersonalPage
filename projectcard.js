@@ -1,16 +1,16 @@
 class ProjectCard extends HTMLElement {
-    constructor() {
-      super();
-      // Attach a shadow DOM
-      this.attachShadow({ mode: 'open' });
+  constructor() {
+    super();
+    // Attach a shadow DOM
+    this.attachShadow({ mode: 'open' });
 
-      // Create a container
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('card-wrapper');
+    // Create a container
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('card-wrapper');
 
-      // Create style
-      const style = document.createElement('style');
-      style.textContent = `
+    // Create style
+    const style = document.createElement('style');
+    style.textContent = `
         :host {
           display: block;
         }
@@ -48,8 +48,8 @@ class ProjectCard extends HTMLElement {
         }
       `;
 
-      // Internal HTML structure
-      wrapper.innerHTML = `
+    // Internal HTML structure
+    wrapper.innerHTML = `
         <h2 id="cardTitle"></h2>
         <picture>
           <img id="cardImage" alt="project image">
@@ -58,71 +58,98 @@ class ProjectCard extends HTMLElement {
         <a id="cardLink" href="#">Learn More</a>
       `;
 
-      this.shadowRoot.append(style, wrapper);
-    }
-
-    set data(data) {
-      this.shadowRoot.querySelector('#cardTitle').textContent = data.title;
-      this.shadowRoot.querySelector('#cardImage').src = data.imageSrc;
-      this.shadowRoot.querySelector('#cardImage').alt = data.altText;
-      this.shadowRoot.querySelector('#cardDescription').textContent = data.description;
-      this.shadowRoot.querySelector('#cardLink').href = data.link;
-    }
+    this.shadowRoot.append(style, wrapper);
   }
 
-  customElements.define('project-card', ProjectCard);
+  set data(data) {
+    this.shadowRoot.querySelector('#cardTitle').textContent = data.title;
+    this.shadowRoot.querySelector('#cardImage').src = data.imageSrc;
+    this.shadowRoot.querySelector('#cardImage').alt = data.altText;
+    this.shadowRoot.querySelector('#cardDescription').textContent = data.description;
+    this.shadowRoot.querySelector('#cardLink').href = data.link;
+  }
+}
 
-  const sampleProjects = [
-    {
-      title: "Snowboard",
-      imageSrc: "src/image/Snowboarding.JPG",
-      altText: "Terry Snowboarding",
-      description: "All about my adventures in Mammoth and beyond.",
-      link: "about/snowboarding.html"  
-    },
-    {
-      title: "Boxing",
-      imageSrc: "src/image/Boxing.jpg",
-      altText: "Terry Boxing",
-      description: "Exploring the art of boxing and BigBang Zhang's style.",
-      link: "about/boxing.html"       
-    },
-    {
-        title: "Fishing",
-        imageSrc: "src/image/Fishing.jpg",
-        altText: "Terry Fishing",
-        description: "Fishing with my dad and friends.",
-        link: "about/fishing.html"
+customElements.define('project-card', ProjectCard);
+
+const sampleProjects = [
+  {
+    title: "Snowboard",
+    imageSrc: "src/image/Snowboarding.JPG",
+    altText: "Terry Snowboarding",
+    description: "All about my adventures in Mammoth and beyond.",
+    link: "about/snowboarding.html"
+  },
+  {
+    title: "Boxing",
+    imageSrc: "src/image/Boxing.jpg",
+    altText: "Terry Boxing",
+    description: "Exploring the art of boxing and BigBang Zhang's style.",
+    link: "about/boxing.html"
+  },
+  {
+    title: "Fishing",
+    imageSrc: "src/image/Fishing.jpg",
+    altText: "Terry Fishing",
+    description: "Fishing with my dad and friends.",
+    link: "about/fishing.html"
+  }
+];
+
+localStorage.setItem('myProjects', JSON.stringify(sampleProjects));
+
+
+const loadLocalBtn = document.getElementById('loadLocal');
+const loadRemoteBtn = document.getElementById('loadRemote');
+const projectCardsContainer = document.getElementById('projectCards');
+loadLocalBtn.addEventListener('click', () => {
+
+  projectCardsContainer.innerHTML = '';
+
+  // Retrieve data from localStorage
+  const localData = JSON.parse(localStorage.getItem('myProjects'));
+  if (!localData) {
+    alert('No local data found!');
+    return;
+  }
+
+  // Create cards from local data
+  localData.forEach(project => {
+    const card = document.createElement('project-card');
+    card.data = project;
+    projectCardsContainer.appendChild(card);
+  });
+});
+
+// Load remote data from JSONBin
+loadRemoteBtn.addEventListener('click', () => {
+  projectCardsContainer.innerHTML = '';
+
+  const binId = '67d224ca8a456b796674a8d2';
+  const apiKey = '$2a$10$YBAE7lhmFeP4W1oW84OQu.gaunaWfaVTyjL37DLCEnb0uP7fA4p2m';
+  const url = `https://api.jsonbin.io/v3/b/67d224ca8a456b796674a8d2/latest?meta=false`;
+
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Master-Key': apiKey
     }
-  ];
-
-  localStorage.setItem('myProjects', JSON.stringify(sampleProjects));
-
-
-  const loadLocalBtn = document.getElementById('loadLocal');
-  const projectCardsContainer = document.getElementById('projectCards');
-
-  loadLocalBtn.addEventListener('click', () => {
-
-    projectCardsContainer.innerHTML = '';
-
-    // Retrieve data from localStorage
-    const localData = JSON.parse(localStorage.getItem('myProjects'));
-    if (!localData) {
-      alert('No local data found!');
-      return;
-    }
-
-    // Create cards from local data
-    localData.forEach(project => {
-      const card = document.createElement('project-card');
-      card.data = project;
-      projectCardsContainer.appendChild(card);
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error from JSONBin: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      data.forEach(project => {
+        const card = document.createElement('project-card');
+        card.data = project;
+        projectCardsContainer.appendChild(card);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to load remote data from JSON Bin.');
     });
-  });
-
-
-  const loadRemoteBtn = document.getElementById('loadRemote');
-  loadRemoteBtn.addEventListener('click', () => {
-    alert("Load Remote not implemented yet.");
-  });
+});
