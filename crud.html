@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LocalStorage CRUD Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 800px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    form {
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    form > div {
+      margin-bottom: 10px;
+    }
+    label {
+      display: inline-block;
+      width: 100px;
+    }
+    input[type="text"] {
+      width: 70%;
+      padding: 5px;
+    }
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    .hidden {
+      display: none;
+    }
+    .actions button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>LocalStorage CRUD (Projects)</h1>
+
+  <!-- FORM: CREATE/UPDATE -->
+  <form id="projectForm">
+    <h2 id="formTitle">Create a New Project</h2>
+    <input type="hidden" id="editIndex" value="" />
+    <div>
+      <label for="title">Title:</label>
+      <input type="text" id="title" required />
+    </div>
+    <div>
+      <label for="imageSrc">Image URL:</label>
+      <input type="text" id="imageSrc" required />
+    </div>
+    <div>
+      <label for="altText">Alt Text:</label>
+      <input type="text" id="altText" />
+    </div>
+    <div>
+      <label for="description">Description:</label>
+      <input type="text" id="description" />
+    </div>
+    <div>
+      <label for="link">Link:</label>
+      <input type="text" id="link" />
+    </div>
+    <button type="submit" id="saveBtn">Save</button>
+    <button type="button" id="cancelBtn" class="hidden">Cancel Update</button>
+  </form>
+
+  <h2>Project List</h2>
+  <table id="projectTable">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th>Description</th>
+        <th>Link</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    const STORAGE_KEY = 'myProjects';
+
+    // 1) LOAD existing data from localStorage or create empty array
+    let projects = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    // DOM elements
+    const projectForm = document.getElementById('projectForm');
+    const formTitle = document.getElementById('formTitle');
+    const editIndex = document.getElementById('editIndex');
+
+    const titleField = document.getElementById('title');
+    const imageField = document.getElementById('imageSrc');
+    const altTextField = document.getElementById('altText');
+    const descField = document.getElementById('description');
+    const linkField = document.getElementById('link');
+
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    const projectTableBody = document.querySelector('#projectTable tbody');
+
+    // 2) INITIAL RENDER of table
+    renderTable();
+
+    // 3) CREATE or UPDATE: Submit form
+    projectForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const newProject = {
+        title: titleField.value,
+        imageSrc: imageField.value,
+        altText: altTextField.value,
+        description: descField.value,
+        link: linkField.value
+      };
+
+      // If editIndex has a value, we are updating an existing project
+      const idx = editIndex.value;
+      if (idx) {
+        // Update existing
+        projects[idx] = newProject;
+      } else {
+        // Create new
+        projects.push(newProject);
+      }
+
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+      // Reset form and re-render
+      projectForm.reset();
+      editIndex.value = '';
+      cancelBtn.classList.add('hidden');
+      formTitle.textContent = 'Create a New Project';
+
+      renderTable();
+    });
+
+    // Cancel button (when updating)
+    cancelBtn.addEventListener('click', () => {
+      projectForm.reset();
+      editIndex.value = '';
+      cancelBtn.classList.add('hidden');
+      formTitle.textContent = 'Create a New Project';
+    });
+
+    //RENDER TABLE
+    function renderTable() {
+      // Clear existing rows
+      projectTableBody.innerHTML = '';
+
+      // For each project, create a row
+      projects.forEach((proj, idx) => {
+        const row = document.createElement('tr');
+
+        const titleTd = document.createElement('td');
+        titleTd.textContent = proj.title;
+
+        const imageTd = document.createElement('td');
+
+        imageTd.innerHTML = `<img src="${proj.imageSrc}" alt="${proj.altText}" width="50" />`;
+
+        const descTd = document.createElement('td');
+        descTd.textContent = proj.description;
+
+        const linkTd = document.createElement('td');
+        linkTd.innerHTML = `<a href="${proj.link}">${proj.link}</a>`;
+
+        const actionsTd = document.createElement('td');
+        actionsTd.classList.add('actions');
+        
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => {
+          startEdit(idx);
+        });
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+          deleteProject(idx);
+        });
+
+        actionsTd.appendChild(editBtn);
+        actionsTd.appendChild(deleteBtn);
+
+        row.appendChild(titleTd);
+        row.appendChild(imageTd);
+        row.appendChild(descTd);
+        row.appendChild(linkTd);
+        row.appendChild(actionsTd);
+
+        projectTableBody.appendChild(row);
+      });
+    }
+
+    //EDIT
+    function startEdit(index) {
+      const proj = projects[index];
+      titleField.value = proj.title;
+      imageField.value = proj.imageSrc;
+      altTextField.value = proj.altText;
+      descField.value = proj.description;
+      linkField.value = proj.link;
+
+      editIndex.value = index;
+      formTitle.textContent = 'Update Project';
+      cancelBtn.classList.remove('hidden');
+    }
+
+    //DELETE
+    function deleteProject(index) {
+      projects.splice(index, 1);
+
+      // Update localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+      // Re-render table
+      renderTable();
+    }
+  </script>
+</body>
+</html>

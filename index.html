@@ -6,6 +6,31 @@
     <title>Home</title>
     <link rel="stylesheet" href="style.css">
     <script src="themeToggle.js"></script>
+    <script>
+        const KONAMI_CODE = [
+            "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+            "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+            "b", "a"
+        ];
+        let currentIndex = 0;
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === KONAMI_CODE[currentIndex]) {
+                currentIndex++;
+                if (currentIndex === KONAMI_CODE.length) {
+                    activateEasterEgg();
+                    currentIndex = 0; // Reset for next time
+                }
+            } else {
+                // Reset if wrong key
+                currentIndex = 0;
+            }
+        });
+
+        function activateEasterEgg() {
+            alert("Konami Code Activated!");
+        }
+    </script>
 </head>
 
 <body>
