@@ -8,7 +8,6 @@ class ProjectCard extends HTMLElement {
     const wrapper = document.createElement('div');
     wrapper.classList.add('card-wrapper');
 
-    // Create style
     const style = document.createElement('style');
     style.textContent = `
         :host {

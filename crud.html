@@ -2,248 +2,226 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>LocalStorage CRUD Example</title>
+  <title>CRUD Example</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      max-width: 800px;
-    }
-    h1, h2 {
-      color: #333;
+      max-width: 600px;
     }
     form {
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    form > div {
-      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      grid-row-gap: 0.75rem;
+      grid-column-gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
     label {
-      display: inline-block;
-      width: 100px;
-    }
-    input[type="text"] {
-      width: 70%;
-      padding: 5px;
+      text-align: right;
+      padding-right: 5px;
     }
     button {
-      padding: 5px 10px;
-      margin-right: 5px;
-      cursor: pointer;
+      margin-right: 0.5rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
+    #projectList {
+      margin-top: 1rem;
     }
-    th, td {
+    .project-item {
       border: 1px solid #ccc;
       padding: 8px;
-      text-align: left;
+      margin: 4px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    tr:nth-child(even) {
-      background: #f9f9f9;
+    .project-item span {
+      font-weight: bold;
     }
-    .hidden {
-      display: none;
+    .controls {
+      margin-top: 0.5rem;
     }
-    .actions button {
-      margin-right: 5px;
+    .controls button {
+      margin-right: 6px;
     }
   </style>
 </head>
 <body>
-  <h1>LocalStorage CRUD (Projects)</h1>
+  <h1>LocalStorage CRUD</h1>
 
-  <!-- FORM: CREATE/UPDATE -->
+  <button onclick="history.back()">Go Back</button>
   <form id="projectForm">
-    <h2 id="formTitle">Create a New Project</h2>
-    <input type="hidden" id="editIndex" value="" />
-    <div>
-      <label for="title">Title:</label>
-      <input type="text" id="title" required />
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required />
+
+    <label for="imageSrc">Image Src:</label>
+    <input type="text" id="imageSrc" name="imageSrc" />
+
+    <label for="altText">Alt Text:</label>
+    <input type="text" id="altText" name="altText" />
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" />
+
+    <label for="link">Link:</label>
+    <input type="text" id="link" name="link" />
+
+    <!-- Hidden field to store the "index" or "ID" of the project if we are updating -->
+    <input type="hidden" id="editIndex" name="editIndex" value="-1" />
+
+    <div></div> <!-- empty placeholder for grid alignment -->
+    <div class="controls">
+      <button type="button" id="createBtn">Create</button>
+      <button type="button" id="updateBtn" disabled>Update</button>
+      <button type="reset" id="clearBtn">Clear</button>
     </div>
-    <div>
-      <label for="imageSrc">Image URL:</label>
-      <input type="text" id="imageSrc" required />
-    </div>
-    <div>
-      <label for="altText">Alt Text:</label>
-      <input type="text" id="altText" />
-    </div>
-    <div>
-      <label for="description">Description:</label>
-      <input type="text" id="description" />
-    </div>
-    <div>
-      <label for="link">Link:</label>
-      <input type="text" id="link" />
-    </div>
-    <button type="submit" id="saveBtn">Save</button>
-    <button type="button" id="cancelBtn" class="hidden">Cancel Update</button>
   </form>
 
-  <h2>Project List</h2>
-  <table id="projectTable">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Image</th>
-        <th>Description</th>
-        <th>Link</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
+  <h2>Projects in LocalStorage</h2>
+  <div id="projectList"></div>
 
   <script>
+
     const STORAGE_KEY = 'myProjects';
 
-    // 1) LOAD existing data from localStorage or create empty array
     let projects = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-    // DOM elements
-    const projectForm = document.getElementById('projectForm');
-    const formTitle = document.getElementById('formTitle');
-    const editIndex = document.getElementById('editIndex');
+    const projectListDiv = document.getElementById('projectList');
+    const titleInput = document.getElementById('title');
+    const imageSrcInput = document.getElementById('imageSrc');
+    const altTextInput = document.getElementById('altText');
+    const descriptionInput = document.getElementById('description');
+    const linkInput = document.getElementById('link');
+    const editIndexInput = document.getElementById('editIndex');
 
-    const titleField = document.getElementById('title');
-    const imageField = document.getElementById('imageSrc');
-    const altTextField = document.getElementById('altText');
-    const descField = document.getElementById('description');
-    const linkField = document.getElementById('link');
+    const createBtn = document.getElementById('createBtn');
+    const updateBtn = document.getElementById('updateBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
-    const saveBtn = document.getElementById('saveBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-
-    const projectTableBody = document.querySelector('#projectTable tbody');
-
-    // 2) INITIAL RENDER of table
-    renderTable();
-
-    // 3) CREATE or UPDATE: Submit form
-    projectForm.addEventListener('submit', e => {
-      e.preventDefault();
-
+    // --- CREATE a new project ---
+    createBtn.addEventListener('click', () => {
       const newProject = {
-        title: titleField.value,
-        imageSrc: imageField.value,
-        altText: altTextField.value,
-        description: descField.value,
-        link: linkField.value
+        title: titleInput.value.trim(),
+        imageSrc: imageSrcInput.value.trim(),
+        altText: altTextInput.value.trim(),
+        description: descriptionInput.value.trim(),
+        link: linkInput.value.trim()
       };
 
-      // If editIndex has a value, we are updating an existing project
-      const idx = editIndex.value;
-      if (idx) {
-        // Update existing
-        projects[idx] = newProject;
-      } else {
-        // Create new
-        projects.push(newProject);
+      if (!newProject.title) {
+        alert('Title is required.');
+        return;
       }
 
-      // Save to localStorage
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+      // Push to array + save to localStorage
+      projects.push(newProject);
+      saveProjects();
+      renderProjects();
 
-      // Reset form and re-render
-      projectForm.reset();
-      editIndex.value = '';
-      cancelBtn.classList.add('hidden');
-      formTitle.textContent = 'Create a New Project';
-
-      renderTable();
+      // Clear form
+      clearForm();
     });
 
-    // Cancel button (when updating)
-    cancelBtn.addEventListener('click', () => {
-      projectForm.reset();
-      editIndex.value = '';
-      cancelBtn.classList.add('hidden');
-      formTitle.textContent = 'Create a New Project';
-    });
+    // --- READ & RENDER projects from the array ---
+    function renderProjects() {
+      // Clear current display
+      projectListDiv.innerHTML = '';
 
-    //RENDER TABLE
-    function renderTable() {
-      // Clear existing rows
-      projectTableBody.innerHTML = '';
+      // For each project, create a small "row" with Edit & Delete
+      projects.forEach((proj, index) => {
+        const div = document.createElement('div');
+        div.classList.add('project-item');
 
-      // For each project, create a row
-      projects.forEach((proj, idx) => {
-        const row = document.createElement('tr');
+        // Simple display of the project
+        const info = document.createElement('div');
+        info.innerHTML = `
+          <span>${proj.title}</span> 
+          <br> Desc: ${proj.description}
+        `;
+        div.appendChild(info);
 
-        const titleTd = document.createElement('td');
-        titleTd.textContent = proj.title;
+        // Buttons: Edit + Delete
+        const btnContainer = document.createElement('div');
 
-        const imageTd = document.createElement('td');
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.addEventListener('click', () => editProject(index));
 
-        imageTd.innerHTML = `<img src="${proj.imageSrc}" alt="${proj.altText}" width="50" />`;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => deleteProject(index));
 
-        const descTd = document.createElement('td');
-        descTd.textContent = proj.description;
+        btnContainer.appendChild(editButton);
+        btnContainer.appendChild(deleteButton);
 
-        const linkTd = document.createElement('td');
-        linkTd.innerHTML = `<a href="${proj.link}">${proj.link}</a>`;
-
-        const actionsTd = document.createElement('td');
-        actionsTd.classList.add('actions');
-        
-        // Edit button
-        const editBtn = document.createElement('button');
-        editBtn.textContent = 'Edit';
-        editBtn.addEventListener('click', () => {
-          startEdit(idx);
-        });
-
-        // Delete button
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click', () => {
-          deleteProject(idx);
-        });
-
-        actionsTd.appendChild(editBtn);
-        actionsTd.appendChild(deleteBtn);
-
-        row.appendChild(titleTd);
-        row.appendChild(imageTd);
-        row.appendChild(descTd);
-        row.appendChild(linkTd);
-        row.appendChild(actionsTd);
-
-        projectTableBody.appendChild(row);
+        div.appendChild(btnContainer);
+        projectListDiv.appendChild(div);
       });
     }
 
-    //EDIT
-    function startEdit(index) {
+    updateBtn.addEventListener('click', () => {
+      const idx = parseInt(editIndexInput.value, 10);
+      if (idx < 0) {
+        alert('No project is selected for update.');
+        return;
+      }
+
+      projects[idx].title = titleInput.value.trim();
+      projects[idx].imageSrc = imageSrcInput.value.trim();
+      projects[idx].altText = altTextInput.value.trim();
+      projects[idx].description = descriptionInput.value.trim();
+      projects[idx].link = linkInput.value.trim();
+
+      saveProjects();
+      renderProjects();
+      clearForm();
+    });
+
+    // --- EDIT function: load a project into the form ---
+    function editProject(index) {
       const proj = projects[index];
-      titleField.value = proj.title;
-      imageField.value = proj.imageSrc;
-      altTextField.value = proj.altText;
-      descField.value = proj.description;
-      linkField.value = proj.link;
+      titleInput.value = proj.title;
+      imageSrcInput.value = proj.imageSrc;
+      altTextInput.value = proj.altText;
+      descriptionInput.value = proj.description;
+      linkInput.value = proj.link;
+      editIndexInput.value = index;
 
-      editIndex.value = index;
-      formTitle.textContent = 'Update Project';
-      cancelBtn.classList.remove('hidden');
+      // Enable "Update" button
+      updateBtn.disabled = false;
+      // Optionally, you could disable "Create" while editing
     }
 
-    //DELETE
+    // --- DELETE a project ---
     function deleteProject(index) {
+      if (!confirm('Are you sure you want to delete this project?')) return;
       projects.splice(index, 1);
-
-      // Update localStorage
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-
-      // Re-render table
-      renderTable();
+      saveProjects();
+      renderProjects();
+      clearForm();
     }
+
+    function saveProjects() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    }
+
+    // --- Clear form inputs ---
+    function clearForm() {
+      titleInput.value = '';
+      imageSrcInput.value = '';
+      altTextInput.value = '';
+      descriptionInput.value = '';
+      linkInput.value = '';
+      editIndexInput.value = '-1';
+      updateBtn.disabled = true;
+    }
+
+    // Initialize
+    renderProjects();
+
+    // Clear button = built-in form reset, but we can do extra logic:
+    clearBtn.addEventListener('click', () => {
+      clearForm();
+    });
   </script>
 </body>
 </html>
